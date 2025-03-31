@@ -1,0 +1,10 @@
+GET http://localhost:8080/tshirt
+
+### 
+
+POST http://localhost:8080/tshirt/1
+Content-Type: application/json
+
+{
+    "logo": "🔥"
+}
