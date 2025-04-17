@@ -22,4 +22,4 @@ npm start
 
 ## Credits
 
-- `@Dylankjy` for motivating to continue this project
+- `@Dylankjy` for motivating me to continue this project
