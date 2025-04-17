@@ -1,10 +1,31 @@
-GET http://localhost:8080/tshirt
+GET http://localhost:8080/reviews
 
 ### 
 
-POST http://localhost:8080/tshirt/1
+GET http://localhost:8080/reviews/13
+
+### 
+
+POST http://localhost:8080/reviews
 Content-Type: application/json
 
 {
-    "logo": "🔥"
+    "anime": "My Hero Academia 2",
+    "rating": "1",
+    "content": "Meh."
 }
+
+###
+
+PUT http://localhost:8080/reviews/13
+Content-Type: application/json
+
+{
+    "anime": "My Hero ",
+    "rating": "2",
+    "content": "OMG SO GOOD"
+}
+
+### 
+
+DELETE http://localhost:8080/reviews/12
