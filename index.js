@@ -1,13 +1,11 @@
 const express = require('express');
 const Joi = require('joi');
 const sqlite3 = require('sqlite3').verbose();
-
 const app = express();
 const PORT = 8080;
-
 app.use(express.json());
 
-// Connect to database or create one if it does not exist
+// CREATE DATABASE
 const db = new sqlite3.Database('./reviews.db', (err) => {
     if (err) {
         console.error("Failed to connect to database:", err);
@@ -16,7 +14,7 @@ const db = new sqlite3.Database('./reviews.db', (err) => {
     }
 });
 
-// Create tables if they do not exist
+// CREATE TABLE
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS reviews (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,14 +24,16 @@ db.serialize(() => {
     )`)
 });
 
+// VALID REVIEW SCHEMA
 const reviewSchema = Joi.object({
     anime: Joi.string().min(1).required(),
     rating: Joi.number().integer().min(0).max(10).required(),
     content: Joi.string().min(1).required(),
 })
 
-// Review endpoints
+// REVIEW ENDPOINTS
 
+// GET REVIEW
 app.get('/reviews', (req, res) => {
     db.all('SELECT * FROM reviews', (err, rows) => {
         if (err) {
@@ -43,6 +43,7 @@ app.get('/reviews', (req, res) => {
     });
 });
 
+// POST REVIEW
 app.post('/reviews', (req, res) => {
     const review = req.body;
 
@@ -66,9 +67,10 @@ app.post('/reviews', (req, res) => {
     });
 });
 
+// GET REVIEW BY ID
 app.get('/reviews/:id', (req, res) => {
     const { id } = req.params;
-    
+
     db.all('SELECT * FROM reviews WHERE id=?', [id], (err, rows) => {
         if (err) {
             return res.status(500).send({ error: err.message });
@@ -80,6 +82,7 @@ app.get('/reviews/:id', (req, res) => {
     });
 });
 
+// PUT REVIEW
 app.put('/reviews/:id', (req, res) => {
     const { id } = req.params;
     const review = req.body;
@@ -113,6 +116,7 @@ app.put('/reviews/:id', (req, res) => {
     });
 });
 
+// DELETE REVIEW
 app.delete('/reviews/:id', (req, res) => {
     const { id } = req.params;
 
@@ -132,6 +136,7 @@ app.delete('/reviews/:id', (req, res) => {
     });
 });
 
+// START APP
 app.listen(
     PORT,
     () => console.log(`it's alive on http://localhost:${PORT}`)
