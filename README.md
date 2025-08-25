@@ -28,4 +28,4 @@ npm start
 
 ## Credits
 
-- `@Dylankjy` for encouraging me to build this project.
+- `@Dylankjy` for encouraging me to continue this project.
