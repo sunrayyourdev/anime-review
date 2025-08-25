@@ -1,11 +1,16 @@
+// Importing modules
 const express = require('express');
 const Joi = require('joi');
 const sqlite3 = require('sqlite3').verbose();
+
+// Creating the app
 const app = express();
+
+// Configuration
 const PORT = 8080;
 app.use(express.json());
 
-// CREATE DATABASE
+// Initialising the SQLite database
 const db = new sqlite3.Database('./reviews.db', (err) => {
     if (err) {
         console.error("Failed to connect to database:", err);
@@ -14,19 +19,19 @@ const db = new sqlite3.Database('./reviews.db', (err) => {
     }
 });
 
-// CREATE TABLE
+// Creating the 'review' table
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS reviews (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        anime VARCHAR(200) NOT NULL,
-        rating INTEGER NOT NULL,
-        content VARCHAR(200) NOT NULL
+        anime_name VARCHAR(255) NOT NULL,
+        rating INTEGER NOT NULL CHECK (rating >= 0 AND rating <= 10),
+        content TEXT NOT NULL CHECK (LENGTH(content) <= 500)
     )`)
 });
 
 // VALID REVIEW SCHEMA
 const reviewSchema = Joi.object({
-    anime: Joi.string().min(1).required(),
+    anime_name: Joi.string().min(1).required(),
     rating: Joi.number().integer().min(0).max(10).required(),
     content: Joi.string().min(1).required(),
 })
@@ -52,8 +57,8 @@ app.post('/reviews', (req, res) => {
         return res.status(400).send({ error: error.details[0].message });
     }
 
-    const sql = `INSERT INTO reviews (anime, rating, content) VALUES (?, ?, ?)`;
-    const params = [review.anime, Number(review.rating), review.content];
+    const sql = `INSERT INTO reviews (anime_name, rating, content) VALUES (?, ?, ?)`;
+    const params = [review.anime_name, Number(review.rating), review.content];
     db.run(sql, params, (err) => {
         if (err) {
             return res.status(500).send({ error: err.message });
@@ -99,8 +104,8 @@ app.put('/reviews/:id', (req, res) => {
         if (!rows || rows.length === 0) {
             return res.status(404).send({ error: "Review not found" });
         }
-        const sql = `UPDATE reviews SET anime=?, rating=?, content=? WHERE id=?`;
-        const params = [review.anime, Number(review.rating), review.content, id];
+        const sql = `UPDATE reviews SET anime_name=?, rating=?, content=? WHERE id=?`;
+        const params = [review.anime_name, Number(review.rating), review.content, id];
         db.run(sql, params, (err) => {
             if (err) {
                 return res.status(500).send({ error: err.message });
