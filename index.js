@@ -1,17 +1,11 @@
-// Importing modules
 const express = require('express');
 const Joi = require('joi');
 const sqlite3 = require('sqlite3').verbose();
-
-// Creating the app
 const app = express();
-
-// Configuration
 const PORT = 8080;
 app.use(express.json());
 
-// Initialising the SQLite database
-const db = new sqlite3.Database('./reviews.db', (err) => {
+const db = new sqlite3.Database('./review.db', (err) => {
     if (err) {
         console.error("Failed to connect to database:", err);
     } else {
@@ -19,26 +13,34 @@ const db = new sqlite3.Database('./reviews.db', (err) => {
     }
 });
 
-// Creating the 'review' table
 db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS reviews (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        anime_name VARCHAR(255) NOT NULL,
-        rating INTEGER NOT NULL CHECK (rating >= 0 AND rating <= 10),
-        content TEXT NOT NULL CHECK (LENGTH(content) <= 500)
-    )`)
+    db.run(`CREATE TABLE IF NOT EXISTS 
+        reviews (
+            id 
+                INTEGER 
+                PRIMARY KEY 
+                AUTOINCREMENT,
+            anime_name 
+                VARCHAR(255) 
+                NOT NULL,
+            rating 
+                INTEGER 
+                NOT NULL 
+                CHECK (rating >= 0 AND rating <= 10),
+            content 
+                TEXT 
+                NOT NULL 
+                CHECK (LENGTH(content) <= 500)
+        )
+    `)
 });
 
-// VALID REVIEW SCHEMA
 const reviewSchema = Joi.object({
     anime_name: Joi.string().min(1).required(),
     rating: Joi.number().integer().min(0).max(10).required(),
     content: Joi.string().min(1).required(),
 })
 
-// REVIEW ENDPOINTS
-
-// GET REVIEW
 app.get('/reviews', (req, res) => {
     db.all('SELECT * FROM reviews', (err, rows) => {
         if (err) {
@@ -48,7 +50,6 @@ app.get('/reviews', (req, res) => {
     });
 });
 
-// POST REVIEW
 app.post('/reviews', (req, res) => {
     const review = req.body;
 
@@ -72,7 +73,6 @@ app.post('/reviews', (req, res) => {
     });
 });
 
-// GET REVIEW BY ID
 app.get('/reviews/:id', (req, res) => {
     const { id } = req.params;
 
@@ -87,7 +87,6 @@ app.get('/reviews/:id', (req, res) => {
     });
 });
 
-// PUT REVIEW
 app.put('/reviews/:id', (req, res) => {
     const { id } = req.params;
     const review = req.body;
@@ -121,7 +120,6 @@ app.put('/reviews/:id', (req, res) => {
     });
 });
 
-// DELETE REVIEW
 app.delete('/reviews/:id', (req, res) => {
     const { id } = req.params;
 
@@ -141,7 +139,6 @@ app.delete('/reviews/:id', (req, res) => {
     });
 });
 
-// START APP
 app.listen(
     PORT,
     () => console.log(`it's alive on http://localhost:${PORT}`)

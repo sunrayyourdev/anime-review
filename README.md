@@ -1,6 +1,6 @@
-# Anime Reviewer
+# AnimeReview
 
-An anime and manga review app.
+An anime review app.
 
 ## Features
 
@@ -28,4 +28,4 @@ npm start
 
 ## Credits
 
-- `@Dylankjy` for encouraging me to start this project.
+- `@Dylankjy` for encouraging me to build this project.
