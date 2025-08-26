@@ -2,7 +2,7 @@ GET http://localhost:8080/reviews
 
 ### 
 
-GET http://localhost:8080/reviews/13
+GET http://localhost:8080/reviews/1
 
 ### 
 
@@ -28,4 +28,4 @@ Content-Type: application/json
 
 ### 
 
-DELETE http://localhost:8080/reviews/12
+DELETE http://localhost:8080/reviews/1
